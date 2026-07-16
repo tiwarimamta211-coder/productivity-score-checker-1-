@@ -1,0 +1,793 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Productivity Score Checker | IncomeAIHub</title>
+<meta name="description" content="Apna Productivity Score check karein - free assessment tool by IncomeAIHub">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0a0a0f; --bg2:#0f0f17; --panel:#14141f; --panel2:#191926;
+  --border:rgba(255,255,255,0.08); --border2:rgba(255,255,255,0.14);
+  --gold:#d4af37; --gold-l:#f0d878; --emerald:#10b981; --emerald-l:#34d399;
+  --violet:#8b5cf6; --violet-l:#a78bfa;
+  --text:#f2f2f5; --text-dim:#9a9aa8; --text-dim2:#6b6b78;
+  --danger:#ef4444; --warn:#f59e0b;
+  --radius:16px; --radius-sm:10px;
+  --shadow:0 20px 60px rgba(0,0,0,0.5);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{
+  background:
+    radial-gradient(circle at 15% 0%, rgba(139,92,246,0.10), transparent 45%),
+    radial-gradient(circle at 85% 20%, rgba(212,175,55,0.08), transparent 45%),
+    radial-gradient(circle at 50% 100%, rgba(16,185,129,0.07), transparent 50%),
+    var(--bg);
+  color:var(--text);
+  font-family:'DM Sans',sans-serif;
+  min-height:100vh;
+  line-height:1.5;
+}
+.font-display{font-family:'Syne',sans-serif;}
+.font-mono{font-family:'DM Mono',monospace;}
+.wrap{max-width:960px;margin:0 auto;padding:20px 18px 80px;}
+
+/* Header */
+header{display:flex;align-items:center;justify-content:space-between;padding:18px 0 28px;flex-wrap:wrap;gap:12px;}
+.brand{display:flex;align-items:center;gap:10px;}
+.brand-icon{
+  width:38px;height:38px;border-radius:10px;
+  background:linear-gradient(135deg,var(--gold),var(--emerald));
+  display:flex;align-items:center;justify-content:center;font-size:18px;
+}
+.brand-name{font-family:'Syne',sans-serif;font-weight:700;font-size:17px;letter-spacing:0.3px;}
+.brand-sub{font-size:11px;color:var(--text-dim2);font-family:'DM Mono',monospace;}
+.header-actions{display:flex;gap:10px;align-items:center;}
+.btn-guide{
+  background:var(--panel);border:1px solid var(--border2);color:var(--gold-l);
+  padding:9px 16px;border-radius:999px;font-size:13px;font-weight:600;cursor:pointer;
+  display:flex;align-items:center;gap:6px;transition:.2s;
+}
+.btn-guide:hover{border-color:var(--gold);background:var(--panel2);}
+
+/* Hero */
+.hero{text-align:center;padding:20px 0 34px;}
+.hero h1{font-family:'Syne',sans-serif;font-weight:800;font-size:clamp(26px,5vw,42px);
+  background:linear-gradient(135deg,var(--gold-l),var(--emerald-l) 60%,var(--violet-l));
+  -webkit-background-clip:text;background-clip:text;color:transparent;line-height:1.2;
+}
+.hero p{color:var(--text-dim);margin-top:10px;font-size:15px;max-width:520px;margin-inline:auto;}
+
+/* Card */
+.card{
+  background:linear-gradient(180deg,var(--panel),var(--panel2));
+  border:1px solid var(--border);border-radius:var(--radius);
+  padding:26px;box-shadow:var(--shadow);margin-bottom:20px;
+}
+
+/* Progress bar for quiz */
+.progress-wrap{margin-bottom:22px;}
+.progress-bar{height:6px;background:rgba(255,255,255,0.06);border-radius:99px;overflow:hidden;}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--gold),var(--emerald));border-radius:99px;transition:width .35s ease;}
+.progress-label{display:flex;justify-content:space-between;font-size:12px;color:var(--text-dim2);margin-top:8px;font-family:'DM Mono',monospace;}
+
+/* Question */
+.q-category{
+  display:inline-block;font-size:11px;font-weight:700;letter-spacing:0.5px;text-transform:uppercase;
+  color:var(--emerald-l);background:rgba(16,185,129,0.1);border:1px solid rgba(16,185,129,0.25);
+  padding:4px 10px;border-radius:99px;margin-bottom:14px;
+}
+.q-text{font-family:'Syne',sans-serif;font-size:clamp(18px,3vw,23px);font-weight:700;margin-bottom:22px;line-height:1.35;}
+.options{display:flex;flex-direction:column;gap:10px;}
+.option{
+  background:var(--bg2);border:1.5px solid var(--border);border-radius:var(--radius-sm);
+  padding:14px 16px;cursor:pointer;font-size:14.5px;color:var(--text);transition:.15s;
+  display:flex;align-items:center;gap:12px;
+}
+.option:hover{border-color:var(--gold);background:rgba(212,175,55,0.06);}
+.option.selected{border-color:var(--emerald);background:rgba(16,185,129,0.1);}
+.option .dot{width:18px;height:18px;border-radius:50%;border:2px solid var(--border2);flex-shrink:0;position:relative;}
+.option.selected .dot{border-color:var(--emerald);}
+.option.selected .dot::after{content:'';position:absolute;inset:3px;border-radius:50%;background:var(--emerald);}
+
+.nav-row{display:flex;justify-content:space-between;margin-top:26px;gap:10px;}
+.btn{
+  border:none;border-radius:999px;padding:13px 26px;font-size:14px;font-weight:700;cursor:pointer;
+  transition:.2s;font-family:'DM Sans',sans-serif;
+}
+.btn-primary{background:linear-gradient(135deg,var(--gold),var(--emerald));color:#0a0a0f;}
+.btn-primary:hover{filter:brightness(1.1);transform:translateY(-1px);}
+.btn-primary:disabled{opacity:0.4;cursor:not-allowed;transform:none;}
+.btn-ghost{background:transparent;border:1.5px solid var(--border2);color:var(--text-dim);}
+.btn-ghost:hover{color:var(--text);border-color:var(--text-dim);}
+.btn-ghost:disabled{opacity:0.3;cursor:not-allowed;}
+
+/* Start screen */
+.start-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:12px;margin:22px 0;}
+.start-chip{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:14px;text-align:center;}
+.start-chip .n{font-family:'Syne',sans-serif;font-weight:800;font-size:22px;color:var(--gold-l);}
+.start-chip .l{font-size:11.5px;color:var(--text-dim2);margin-top:4px;}
+
+/* Results */
+.score-hero{text-align:center;padding:10px 0 20px;}
+.score-ring{width:180px;height:180px;margin:0 auto 14px;position:relative;}
+.score-num{font-family:'Syne',sans-serif;font-weight:800;font-size:44px;}
+.score-max{font-size:14px;color:var(--text-dim2);}
+.score-tag{font-family:'Syne',sans-serif;font-weight:700;font-size:19px;margin-top:6px;}
+
+.cat-grid{display:grid;gap:14px;margin-top:20px;}
+.cat-row{display:grid;grid-template-columns:130px 1fr 50px;align-items:center;gap:12px;}
+.cat-name{font-size:13px;color:var(--text-dim);font-weight:600;}
+.cat-bar-bg{height:9px;background:rgba(255,255,255,0.06);border-radius:99px;overflow:hidden;}
+.cat-bar-fill{height:100%;border-radius:99px;transition:width .6s ease;}
+.cat-pct{font-family:'DM Mono',monospace;font-size:12.5px;text-align:right;color:var(--text-dim);}
+
+.divider{height:1px;background:var(--border);margin:24px 0;}
+
+/* Locked section */
+.locked-box{
+  position:relative;border-radius:var(--radius);overflow:hidden;
+  border:1.5px dashed var(--border2);padding:26px;text-align:center;
+  background:radial-gradient(circle at 50% 0%, rgba(139,92,246,0.08), transparent 60%);
+}
+.lock-icon{font-size:30px;margin-bottom:10px;}
+.locked-box h3{font-family:'Syne',sans-serif;font-size:18px;margin-bottom:8px;}
+.locked-box p{color:var(--text-dim);font-size:13.5px;margin-bottom:18px;max-width:440px;margin-inline:auto;}
+.feature-list{list-style:none;text-align:left;max-width:340px;margin:0 auto 20px;}
+.feature-list li{font-size:13.5px;color:var(--text-dim);padding:6px 0;display:flex;gap:8px;align-items:flex-start;}
+.feature-list li::before{content:'✓';color:var(--emerald);font-weight:700;}
+.price-tag{font-family:'Syne',sans-serif;font-size:26px;font-weight:800;color:var(--gold-l);margin-bottom:4px;}
+.price-note{font-size:11.5px;color:var(--text-dim2);margin-bottom:18px;}
+.btn-unlock{
+  background:linear-gradient(135deg,var(--gold),var(--gold-l));color:#1a1200;
+  border:none;padding:14px 32px;border-radius:999px;font-weight:800;font-size:15px;cursor:pointer;
+  box-shadow:0 8px 24px rgba(212,175,55,0.25);transition:.2s;
+}
+.btn-unlock:hover{transform:translateY(-2px);box-shadow:0 12px 30px rgba(212,175,55,0.35);}
+
+/* Unlocked content */
+.unlocked-block{display:none;}
+.unlocked-block.show{display:block;}
+.ai-plan{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:18px;margin-top:14px;white-space:pre-wrap;font-size:14px;line-height:1.7;color:var(--text);}
+.ai-loading{display:flex;align-items:center;gap:10px;color:var(--text-dim);font-size:13.5px;padding:16px 0;}
+.spinner{width:16px;height:16px;border:2px solid var(--border2);border-top-color:var(--gold);border-radius:50%;animation:spin 0.8s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
+
+.action-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:20px;}
+.btn-secondary{background:var(--bg2);border:1px solid var(--border2);color:var(--text);padding:11px 20px;border-radius:999px;font-size:13.5px;font-weight:600;cursor:pointer;}
+.btn-secondary:hover{border-color:var(--gold);}
+
+/* Ad slots */
+.ad-slot{
+  border:1px dashed var(--border2);border-radius:var(--radius-sm);
+  padding:14px;text-align:center;color:var(--text-dim2);font-size:11px;
+  font-family:'DM Mono',monospace;margin:20px 0;letter-spacing:0.5px;
+}
+
+/* Modal */
+.modal-overlay{
+  display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);backdrop-filter:blur(4px);
+  z-index:100;align-items:center;justify-content:center;padding:20px;
+}
+.modal-overlay.show{display:flex;}
+.modal{
+  background:var(--panel);border:1px solid var(--border2);border-radius:var(--radius);
+  max-width:560px;width:100%;max-height:85vh;overflow-y:auto;padding:26px;position:relative;
+}
+.modal-close{position:absolute;top:16px;right:16px;background:var(--bg2);border:1px solid var(--border2);
+  width:32px;height:32px;border-radius:50%;color:var(--text-dim);cursor:pointer;font-size:16px;}
+.modal h2{font-family:'Syne',sans-serif;font-size:20px;margin-bottom:16px;color:var(--gold-l);}
+.modal h4{font-family:'Syne',sans-serif;font-size:14.5px;margin:16px 0 6px;color:var(--emerald-l);}
+.modal p, .modal li{font-size:13.5px;color:var(--text-dim);line-height:1.7;}
+.modal ul, .modal ol{padding-left:20px;margin-top:4px;}
+
+.toast{
+  position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(100px);
+  background:var(--panel2);border:1px solid var(--border2);padding:13px 22px;border-radius:999px;
+  font-size:13.5px;z-index:200;transition:.3s;box-shadow:var(--shadow);
+}
+.toast.show{transform:translateX(-50%) translateY(0);}
+.toast.error{border-color:var(--danger);color:#fca5a5;}
+.toast.success{border-color:var(--emerald);color:var(--emerald-l);}
+
+footer{text-align:center;padding:26px 0 10px;color:var(--text-dim2);font-size:12px;}
+footer a{color:var(--gold-l);text-decoration:none;}
+
+@media(max-width:520px){
+  .cat-row{grid-template-columns:100px 1fr 40px;}
+  .card{padding:18px;}
+}
+.hidden{display:none !important;}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+  <header>
+    <div class="brand">
+      <div class="brand-icon">⚡</div>
+      <div>
+        <div class="brand-name">Productivity Score</div>
+        <div class="brand-sub">by IncomeAIHub</div>
+      </div>
+    </div>
+    <div class="header-actions">
+      <button class="btn-guide" onclick="openGuide()">📘 Hindi Guide</button>
+    </div>
+  </header>
+
+  <div class="hero">
+    <h1>Apna Productivity Score Check Karein</h1>
+    <p>2 minute ka quick assessment — apni work habits, focus aur time management ka real picture paayein, AI-powered improvement plan ke saath.</p>
+  </div>
+
+  <!-- AD SLOT TOP -->
+  <div class="ad-slot">AdSense Placeholder — Top Banner (728x90)</div>
+
+  <!-- START SCREEN -->
+  <div class="card" id="startCard">
+    <div class="start-grid">
+      <div class="start-chip"><div class="n">12</div><div class="l">Quick Questions</div></div>
+      <div class="start-chip"><div class="n">5</div><div class="l">Key Categories</div></div>
+      <div class="start-chip"><div class="n">2 min</div><div class="l">Time Needed</div></div>
+      <div class="start-chip"><div class="n">100%</div><div class="l">Free Score</div></div>
+    </div>
+    <button class="btn btn-primary" style="width:100%" onclick="startQuiz()">Assessment Shuru Karein →</button>
+  </div>
+
+  <!-- QUIZ SCREEN -->
+  <div class="card hidden" id="quizCard">
+    <div class="progress-wrap">
+      <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+      <div class="progress-label"><span id="progressText">Question 1 of 12</span><span id="progressPct">0%</span></div>
+    </div>
+    <div class="q-category" id="qCategory">FOCUS</div>
+    <div class="q-text" id="qText">Question text</div>
+    <div class="options" id="qOptions"></div>
+    <div class="nav-row">
+      <button class="btn btn-ghost" id="prevBtn" onclick="prevQuestion()">← Peeche</button>
+      <button class="btn btn-primary" id="nextBtn" onclick="nextQuestion()" disabled>Aage →</button>
+    </div>
+  </div>
+
+  <!-- RESULTS SCREEN -->
+  <div class="card hidden" id="resultsCard">
+    <div class="score-hero">
+      <svg width="180" height="180" viewBox="0 0 180 180" style="margin:0 auto;display:block;">
+        <circle cx="90" cy="90" r="78" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="14"/>
+        <circle id="scoreArc" cx="90" cy="90" r="78" fill="none" stroke="url(#scoreGrad)" stroke-width="14"
+          stroke-linecap="round" stroke-dasharray="490" stroke-dashoffset="490" transform="rotate(-90 90 90)"/>
+        <defs>
+          <linearGradient id="scoreGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#d4af37"/>
+            <stop offset="100%" stop-color="#10b981"/>
+          </linearGradient>
+        </defs>
+        <text x="90" y="86" text-anchor="middle" font-family="Syne" font-weight="800" font-size="40" fill="#f2f2f5" id="scoreText">0</text>
+        <text x="90" y="108" text-anchor="middle" font-family="DM Mono" font-size="12" fill="#6b6b78">out of 100</text>
+      </svg>
+      <div class="score-tag" id="scoreTag">—</div>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="cat-grid" id="catGrid"></div>
+
+    <div class="action-row" style="margin-top:26px;">
+      <button class="btn-secondary" onclick="retakeQuiz()">🔄 Dobara Try Karein</button>
+      <button class="btn-secondary" onclick="shareScore()">📤 Score Share Karein</button>
+    </div>
+  </div>
+
+  <!-- AD SLOT MID -->
+  <div class="ad-slot hidden" id="adSlotMid">AdSense Placeholder — In-content (300x250)</div>
+
+  <!-- LOCKED PREMIUM SECTION -->
+  <div class="card hidden" id="premiumLockedCard">
+    <div class="locked-box">
+      <div class="lock-icon">🔒</div>
+      <h3>Detailed AI Report + Action Plan Unlock Karein</h3>
+      <p>Apne score ke base par personalized, AI-generated 30-day improvement plan paayein — kaunse habits change karne hain, kaise focus badhayein, aur weekly milestones.</p>
+      <ul class="feature-list">
+        <li>Category-wise detailed breakdown & insights</li>
+        <li>AI-powered 30-day personalized action plan</li>
+        <li>Weekly productivity milestones</li>
+        <li>Downloadable PDF-style report</li>
+        <li>Lifetime access — dobara payment nahi</li>
+      </ul>
+      <div class="price-tag">₹149 <span style="font-size:14px;color:var(--text-dim2);font-weight:500;">/ lifetime</span></div>
+      <div class="price-note">One-time payment · Razorpay Secure · Instant Unlock</div>
+      <button class="btn-unlock" onclick="startPayment()" id="unlockBtn">Unlock Karein — ₹149</button>
+    </div>
+  </div>
+
+  <!-- UNLOCKED PREMIUM CONTENT -->
+  <div class="card unlocked-block" id="premiumUnlockedCard">
+    <h3 class="font-display" style="font-size:19px;margin-bottom:6px;color:var(--gold-l);">📊 Detailed Report</h3>
+    <p style="color:var(--text-dim);font-size:13.5px;margin-bottom:16px;">Aapke answers ke base par category insights aur ek AI-generated 30-day action plan.</p>
+    <div id="detailedInsights"></div>
+    <div class="divider"></div>
+    <h3 class="font-display" style="font-size:17px;margin-bottom:10px;color:var(--emerald-l);">🤖 AI 30-Day Action Plan</h3>
+    <div id="aiPlanContainer">
+      <div class="ai-loading"><div class="spinner"></div> AI aapka personalized plan bana raha hai...</div>
+    </div>
+    <div class="action-row">
+      <button class="btn-secondary" onclick="regeneratePlan()">🔄 Plan Regenerate Karein</button>
+      <button class="btn-secondary" onclick="downloadReport()">⬇️ Report Download Karein</button>
+    </div>
+  </div>
+
+  <!-- AD SLOT BOTTOM -->
+  <div class="ad-slot">AdSense Placeholder — Bottom Banner (728x90)</div>
+
+  <footer>
+    <p>Built with ❤️ by <a href="#" target="_blank">M.Dev</a> · Part of IncomeAIHub Suite</p>
+  </footer>
+</div>
+
+<!-- HINDI GUIDE MODAL -->
+<div class="modal-overlay" id="guideModal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeGuide()">✕</button>
+    <h2>📘 Productivity Score Checker — Kaise Use Karein</h2>
+    <p>Yeh tool aapki daily work habits ko 5 categories mein measure karta hai aur ek overall Productivity Score deta hai.</p>
+    <h4>Step 1: Assessment Shuru Karein</h4>
+    <p>"Assessment Shuru Karein" button dabayein. 12 quick questions honge — har ek ka answer apni real habits ke hisaab se dein, ideal answer nahi.</p>
+    <h4>Step 2: Free Score Dekhein</h4>
+    <p>Assessment complete hone ke baad aapko turant ek overall score (0-100) aur 5 categories ka breakdown milega:</p>
+    <ul>
+      <li><b>Focus</b> — deep work aur distraction control</li>
+      <li><b>Time Management</b> — planning aur deadlines</li>
+      <li><b>Energy</b> — sleep, breaks, burnout risk</li>
+      <li><b>Task Completion</b> — follow-through rate</li>
+      <li><b>Planning</b> — goal-setting aur prioritization</li>
+    </ul>
+    <h4>Step 3: Detailed Report Unlock Karein (Optional)</h4>
+    <p>₹149 ke one-time payment se aapko milega ek AI-generated 30-day personalized action plan, jo specifically aapki weak categories par focus karega. Yeh lifetime unlock hai — is device par dobara payment nahi karna hoga.</p>
+    <h4>Step 4: Plan Follow Karein</h4>
+    <p>AI plan ko weekly milestones mein todkar follow karein. Report download karke print/save bhi kar sakte hain.</p>
+    <h4>Freelancers/CA Firms ke liye Tip</h4>
+    <p>Yeh tool apne clients ko bhi recommend kar sakte hain — team productivity audits ke liye useful hai.</p>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script>
+/* ============================================================
+   CONFIG — Supabase + Razorpay
+   ============================================================ */
+const SUPABASE_URL = "https://YOUR_PROJECT_REF.supabase.co";
+const SUPABASE_ANON_KEY = "YOUR_SUPABASE_ANON_KEY";
+const RAZORPAY_KEY_ID = "YOUR_RAZORPAY_KEY_ID";
+const TOOL_ID = "productivity-score-checker";
+const UNLOCK_PRICE_PAISE = 14900; // ₹149
+
+let sb = null;
+(function initSupabase(){
+  try{
+    if(window.supabase && window.supabase.createClient){
+      sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    }
+  }catch(e){ console.warn("Supabase init skipped:", e); }
+})();
+
+/* ============================================================
+   DEVICE ID PERSISTENCE
+   ============================================================ */
+function getDeviceId(){
+  let id = localStorage.getItem('psc_device_id');
+  if(!id){
+    id = 'dev_' + Date.now() + '_' + Math.random().toString(36).slice(2,11);
+    localStorage.setItem('psc_device_id', id);
+  }
+  return id;
+}
+function isUnlocked(){ return localStorage.getItem('psc_unlocked_' + TOOL_ID) === 'true'; }
+function setUnlocked(){ localStorage.setItem('psc_unlocked_' + TOOL_ID, 'true'); }
+
+/* ============================================================
+   QUESTIONS BANK — 5 categories, 12 questions
+   Each option has a score 0-4 (higher = more productive)
+   ============================================================ */
+const QUESTIONS = [
+  {cat:"Focus", text:"Kaam karte waqt aap kitni baar phone/social media check karte hain?", options:[
+    {t:"Har 5-10 minute mein", s:0},{t:"Har 20-30 minute mein", s:1},{t:"Har ghante mein ek baar", s:3},{t:"Sirf breaks mein", s:4}]},
+  {cat:"Focus", text:"Aap ek single task par bina distraction ke kitni der focus rakh sakte hain?", options:[
+    {t:"10 minute se kam", s:0},{t:"10-25 minute", s:2},{t:"25-50 minute", s:3},{t:"1 ghante ya zyada", s:4}]},
+  {cat:"Time Management", text:"Kya aap apna din start karne se pehle ek to-do list banate hain?", options:[
+    {t:"Kabhi nahi", s:0},{t:"Kabhi kabhi", s:2},{t:"Zyadatar din", s:3},{t:"Har din, bina fail", s:4}]},
+  {cat:"Time Management", text:"Deadlines ke baare mein aapka kya experience hai?", options:[
+    {t:"Aksar last moment mein rush hoti hai", s:0},{t:"Kabhi kabhi tight ho jaata hai", s:2},{t:"Zyadatar time par complete", s:3},{t:"Hamesha ahead of schedule", s:4}]},
+  {cat:"Energy", text:"Aap roz raat ko kitne ghante sote hain?", options:[
+    {t:"5 ghante se kam", s:0},{t:"5-6 ghante", s:1},{t:"6-7 ghante", s:3},{t:"7-8+ ghante", s:4}]},
+  {cat:"Energy", text:"Kaam ke beech mein kya aap regular breaks lete hain?", options:[
+    {t:"Nahi, ek hi baar mein kaam karta hoon", s:1},{t:"Kabhi kabhi", s:2},{t:"Har 1-2 ghante mein", s:4},{t:"Nahi lagta zaroori hai", s:0}]},
+  {cat:"Energy", text:"Din ke end mein aap kaisa feel karte hain?", options:[
+    {t:"Completely burnt out", s:0},{t:"Kaafi thaka hua", s:1},{t:"Thoda tired lekin theek", s:3},{t:"Energetic aur satisfied", s:4}]},
+  {cat:"Task Completion", text:"Aap apni to-do list ka kitna percentage roz complete karte hain?", options:[
+    {t:"25% se kam", s:0},{t:"25-50%", s:1},{t:"50-75%", s:3},{t:"75-100%", s:4}]},
+  {cat:"Task Completion", text:"Kya aap tasks ko baar-baar postpone (procrastinate) karte hain?", options:[
+    {t:"Roz", s:0},{t:"Hafte mein kai baar", s:1},{t:"Kabhi kabhi", s:3},{t:"Shayad hi kabhi", s:4}]},
+  {cat:"Planning", text:"Kya aapke paas weekly ya monthly goals likhe hue hain?", options:[
+    {t:"Nahi", s:0},{t:"Sirf dimaag mein, likha nahi", s:1},{t:"Loosely likhe hain", s:2},{t:"Clearly likhe aur track karta hoon", s:4}]},
+  {cat:"Planning", text:"Naya kaam aane par aap kaise prioritize karte hain?", options:[
+    {t:"Jo pehle yaad aaye wahi karta hoon", s:0},{t:"Deadline ke hisaab se", s:2},{t:"Urgency + importance dono dekh kar", s:4},{t:"Prioritize nahi karta, sab ek saath", s:0}]},
+  {cat:"Planning", text:"Kya aap apne weekly progress ko review karte hain?", options:[
+    {t:"Kabhi nahi", s:0},{t:"Bahut kam", s:1},{t:"Kabhi kabhi", s:2},{t:"Har hafte regularly", s:4}]},
+];
+
+const CATEGORIES = ["Focus","Time Management","Energy","Task Completion","Planning"];
+const CAT_COLORS = {
+  "Focus":"#d4af37","Time Management":"#10b981","Energy":"#8b5cf6",
+  "Task Completion":"#f59e0b","Planning":"#34d399"
+};
+
+let currentQ = 0;
+let answers = new Array(QUESTIONS.length).fill(null);
+
+/* ============================================================
+   QUIZ FLOW
+   ============================================================ */
+function startQuiz(){
+  document.getElementById('startCard').classList.add('hidden');
+  document.getElementById('quizCard').classList.remove('hidden');
+  currentQ = 0;
+  answers = new Array(QUESTIONS.length).fill(null);
+  renderQuestion();
+}
+
+function renderQuestion(){
+  const q = QUESTIONS[currentQ];
+  document.getElementById('qCategory').textContent = q.cat.toUpperCase();
+  document.getElementById('qText').textContent = q.text;
+  const optsWrap = document.getElementById('qOptions');
+  optsWrap.innerHTML = '';
+  q.options.forEach((opt, idx) => {
+    const div = document.createElement('div');
+    div.className = 'option' + (answers[currentQ] === idx ? ' selected' : '');
+    div.innerHTML = `<div class="dot"></div><span>${opt.t}</span>`;
+    div.onclick = () => selectOption(idx);
+    optsWrap.appendChild(div);
+  });
+  const pct = Math.round(((currentQ) / QUESTIONS.length) * 100);
+  document.getElementById('progressFill').style.width = pct + '%';
+  document.getElementById('progressText').textContent = `Question ${currentQ+1} of ${QUESTIONS.length}`;
+  document.getElementById('progressPct').textContent = pct + '%';
+  document.getElementById('prevBtn').disabled = currentQ === 0;
+  document.getElementById('nextBtn').disabled = answers[currentQ] === null;
+  document.getElementById('nextBtn').textContent = currentQ === QUESTIONS.length - 1 ? 'Score Dekhein →' : 'Aage →';
+}
+
+function selectOption(idx){
+  answers[currentQ] = idx;
+  renderQuestion();
+}
+
+function nextQuestion(){
+  if(answers[currentQ] === null) return;
+  if(currentQ === QUESTIONS.length - 1){
+    calculateAndShowResults();
+  } else {
+    currentQ++;
+    renderQuestion();
+  }
+}
+function prevQuestion(){
+  if(currentQ > 0){ currentQ--; renderQuestion(); }
+}
+
+/* ============================================================
+   SCORING
+   ============================================================ */
+let lastResults = null;
+
+function calculateAndShowResults(){
+  const catTotals = {}; const catCounts = {};
+  CATEGORIES.forEach(c => { catTotals[c] = 0; catCounts[c] = 0; });
+
+  let totalScore = 0, maxScore = 0;
+  QUESTIONS.forEach((q, i) => {
+    const chosen = q.options[answers[i]];
+    catTotals[q.cat] += chosen.s;
+    catCounts[q.cat] += 1;
+    totalScore += chosen.s;
+    maxScore += 4;
+  });
+
+  const overallPct = Math.round((totalScore / maxScore) * 100);
+  const catPercents = {};
+  CATEGORIES.forEach(c => {
+    catPercents[c] = Math.round((catTotals[c] / (catCounts[c] * 4)) * 100);
+  });
+
+  lastResults = { overallPct, catPercents, answers: answers.slice() };
+
+  document.getElementById('quizCard').classList.add('hidden');
+  document.getElementById('resultsCard').classList.remove('hidden');
+  document.getElementById('adSlotMid').classList.remove('hidden');
+  document.getElementById('premiumLockedCard').classList.remove('hidden');
+
+  animateScore(overallPct);
+  renderCategoryBreakdown(catPercents);
+  checkUnlockStatus();
+}
+
+function animateScore(pct){
+  const circumference = 490;
+  const offset = circumference - (circumference * pct / 100);
+  const arc = document.getElementById('scoreArc');
+  const numEl = document.getElementById('scoreText');
+  const tagEl = document.getElementById('scoreTag');
+
+  setTimeout(() => { arc.style.transition = 'stroke-dashoffset 1s ease'; arc.style.strokeDashoffset = offset; }, 100);
+
+  let start = 0;
+  const step = () => {
+    start += Math.ceil(pct / 30);
+    if(start >= pct){ numEl.textContent = pct; }
+    else { numEl.textContent = start; requestAnimationFrame(step); }
+  };
+  step();
+
+  let tag = "", color = "";
+  if(pct >= 85){ tag = "🏆 Peak Performer"; color = "var(--emerald-l)"; }
+  else if(pct >= 65){ tag = "💪 Solid Performer"; color = "var(--gold-l)"; }
+  else if(pct >= 45){ tag = "⚙️ Room to Improve"; color = "var(--warn)"; }
+  else { tag = "🚨 Needs Attention"; color = "var(--danger)"; }
+  tagEl.textContent = tag;
+  tagEl.style.color = color;
+}
+
+function renderCategoryBreakdown(catPercents){
+  const grid = document.getElementById('catGrid');
+  grid.innerHTML = '';
+  CATEGORIES.forEach(c => {
+    const pct = catPercents[c];
+    const row = document.createElement('div');
+    row.className = 'cat-row';
+    row.innerHTML = `
+      <div class="cat-name">${c}</div>
+      <div class="cat-bar-bg"><div class="cat-bar-fill" style="width:0%;background:${CAT_COLORS[c]}"></div></div>
+      <div class="cat-pct">${pct}%</div>
+    `;
+    grid.appendChild(row);
+    setTimeout(() => { row.querySelector('.cat-bar-fill').style.width = pct + '%'; }, 200);
+  });
+}
+
+function retakeQuiz(){
+  document.getElementById('resultsCard').classList.add('hidden');
+  document.getElementById('premiumLockedCard').classList.add('hidden');
+  document.getElementById('premiumUnlockedCard').classList.remove('show');
+  document.getElementById('adSlotMid').classList.add('hidden');
+  document.getElementById('startCard').classList.remove('hidden');
+}
+
+function shareScore(){
+  const pct = lastResults ? lastResults.overallPct : 0;
+  const text = `Maine apna Productivity Score check kiya — ${pct}/100! Aap bhi check karein:`;
+  if(navigator.share){
+    navigator.share({ title: 'Productivity Score Checker', text, url: window.location.href }).catch(()=>{});
+  } else {
+    navigator.clipboard.writeText(text + ' ' + window.location.href);
+    showToast('Link clipboard mein copy ho gaya!', 'success');
+  }
+}
+
+/* ============================================================
+   RAZORPAY + SUPABASE UNLOCK FLOW
+   ============================================================ */
+async function checkUnlockStatus(){
+  if(isUnlocked()){ showUnlockedContent(); return; }
+  try{
+    if(!sb) return;
+    const deviceId = getDeviceId();
+    const { data, error } = await sb.functions.invoke('check-unlock', {
+      body: { device_id: deviceId, tool_id: TOOL_ID }
+    });
+    if(!error && data && data.unlocked){
+      setUnlocked();
+      showUnlockedContent();
+    }
+  }catch(e){ console.warn('check-unlock skipped:', e); }
+}
+
+async function startPayment(){
+  const btn = document.getElementById('unlockBtn');
+  btn.disabled = true; btn.textContent = 'Processing...';
+
+  try{
+    if(!sb) throw new Error('Payment service unavailable');
+    const deviceId = getDeviceId();
+
+    const { data: orderData, error: orderErr } = await sb.functions.invoke('create-order', {
+      body: { amount: UNLOCK_PRICE_PAISE, tool_id: TOOL_ID, device_id: deviceId }
+    });
+    if(orderErr || !orderData || !orderData.order_id) throw new Error('Order create nahi ho paya');
+
+    const options = {
+      key: RAZORPAY_KEY_ID,
+      amount: UNLOCK_PRICE_PAISE,
+      currency: "INR",
+      name: "IncomeAIHub",
+      description: "Productivity Score Checker — Lifetime Unlock",
+      order_id: orderData.order_id,
+      handler: async function(response){
+        try{
+          const { data: verifyData, error: verifyErr } = await sb.functions.invoke('verify-payment', {
+            body: {
+              razorpay_order_id: response.razorpay_order_id,
+              razorpay_payment_id: response.razorpay_payment_id,
+              razorpay_signature: response.razorpay_signature,
+              device_id: deviceId,
+              tool_id: TOOL_ID
+            }
+          });
+          if(!verifyErr && verifyData && verifyData.success){
+            setUnlocked();
+            showUnlockedContent();
+            showToast('Payment successful! Report unlock ho gayi.', 'success');
+          } else {
+            showToast('Verification fail hui, support se contact karein.', 'error');
+          }
+        }catch(e){ showToast('Verification error: ' + e.message, 'error'); }
+        finally{ btn.disabled = false; btn.textContent = 'Unlock Karein — ₹149'; }
+      },
+      modal: { ondismiss: function(){ btn.disabled = false; btn.textContent = 'Unlock Karein — ₹149'; } },
+      theme: { color: "#d4af37" }
+    };
+    const rzp = new Razorpay(options);
+    rzp.open();
+  }catch(e){
+    showToast(e.message || 'Kuch galat ho gaya, dobara try karein', 'error');
+    btn.disabled = false; btn.textContent = 'Unlock Karein — ₹149';
+  }
+}
+
+function showUnlockedContent(){
+  document.getElementById('premiumLockedCard').classList.add('hidden');
+  document.getElementById('premiumUnlockedCard').classList.add('show');
+  renderDetailedInsights();
+  generateAIPlan();
+}
+
+/* ============================================================
+   DETAILED INSIGHTS (rule-based, uses category scores)
+   ============================================================ */
+function renderDetailedInsights(){
+  if(!lastResults) return;
+  const el = document.getElementById('detailedInsights');
+  const sorted = [...CATEGORIES].sort((a,b) => lastResults.catPercents[a] - lastResults.catPercents[b]);
+  const weakest = sorted[0], strongest = sorted[sorted.length-1];
+
+  el.innerHTML = `
+    <div style="display:grid;gap:10px;">
+      <div style="background:var(--bg2);border-left:3px solid var(--emerald);border-radius:8px;padding:12px 14px;">
+        <b style="color:var(--emerald-l);font-size:13px;">💪 Sabse Strong Area:</b>
+        <div style="font-size:13.5px;color:var(--text-dim);margin-top:4px;">${strongest} (${lastResults.catPercents[strongest]}%) — yeh aapki strength hai, isko maintain karein.</div>
+      </div>
+      <div style="background:var(--bg2);border-left:3px solid var(--warn);border-radius:8px;padding:12px 14px;">
+        <b style="color:var(--warn);font-size:13px;">⚠️ Priority Focus Area:</b>
+        <div style="font-size:13.5px;color:var(--text-dim);margin-top:4px;">${weakest} (${lastResults.catPercents[weakest]}%) — is area par sabse pehle kaam karein, sabse zyada impact yahi dega.</div>
+      </div>
+    </div>
+  `;
+}
+
+/* ============================================================
+   AI-POWERED 30-DAY PLAN via Supabase ai-proxy Edge Function
+   ============================================================ */
+async function generateAIPlan(){
+  const container = document.getElementById('aiPlanContainer');
+  container.innerHTML = `<div class="ai-loading"><div class="spinner"></div> AI aapka personalized plan bana raha hai...</div>`;
+
+  try{
+    if(!sb) throw new Error('AI service unavailable');
+    const sorted = [...CATEGORIES].sort((a,b) => lastResults.catPercents[a] - lastResults.catPercents[b]);
+    const prompt = `User ka productivity assessment result hai: Overall Score ${lastResults.overallPct}/100. Category scores: ${CATEGORIES.map(c => `${c}: ${lastResults.catPercents[c]}%`).join(', ')}. Sabse weak areas: ${sorted[0]}, ${sorted[1]}. Ek 30-day personalized productivity improvement plan Hinglish mein likho, 4 weekly milestones ke sath, jo specifically inn weak areas par focus kare. Practical aur actionable tips do. Short bullet points mein likho.`;
+
+    const { data, error } = await sb.functions.invoke('ai-proxy', {
+      body: { prompt, tool_id: TOOL_ID, device_id: getDeviceId() }
+    });
+
+    if(error || !data || !data.response) throw new Error('AI plan generate nahi ho paya');
+    container.innerHTML = `<div class="ai-plan">${escapeHtml(data.response)}</div>`;
+  }catch(e){
+    container.innerHTML = `<div class="ai-plan">${escapeHtml(getFallbackPlan())}</div>`;
+  }
+}
+
+function getFallbackPlan(){
+  if(!lastResults) return '';
+  const sorted = [...CATEGORIES].sort((a,b) => lastResults.catPercents[a] - lastResults.catPercents[b]);
+  const w1 = sorted[0], w2 = sorted[1];
+  return `📅 30-DAY PRODUCTIVITY PLAN (based on aapke score: ${lastResults.overallPct}/100)
+
+WEEK 1 — Foundation (Focus: ${w1})
+• Har subah 5 minute mein top-3 priorities likhein
+• Phone ko "Do Not Disturb" mode mein rakhein deep-work sessions ke dauran
+• 25-minute Pomodoro sessions try karein
+
+WEEK 2 — Building Habits (Focus: ${w2})
+• Ek fixed "shutdown routine" banayein — din end karne ka signal
+• 2 chhote breaks add karein (10 min har 90 minute mein)
+• Weekly review Sunday ko 15 minute ke liye karein
+
+WEEK 3 — Consistency
+• Distraction log rakhein — jab bhi focus toote, note karein kyun
+• Sabse important task din ke pehle 2 ghante mein complete karein
+• Sleep schedule ko 30 minute early shift karein
+
+WEEK 4 — Optimize & Reflect
+• Apna original score dobara measure karein
+• Jo habits kaam kar rahi hain unhe permanent banayein
+• Next month ke liye 1 naya goal set karein
+
+Tip: Chhoti consistent habits, bade one-time changes se zyada powerful hoti hain.`;
+}
+
+function regeneratePlan(){ generateAIPlan(); }
+
+function downloadReport(){
+  if(!lastResults) return;
+  const sorted = [...CATEGORIES].sort((a,b) => lastResults.catPercents[a] - lastResults.catPercents[b]);
+  const planText = document.querySelector('.ai-plan') ? document.querySelector('.ai-plan').textContent : getFallbackPlan();
+  const report = `PRODUCTIVITY SCORE REPORT
+Generated: ${new Date().toLocaleDateString('en-IN')}
+================================
+
+OVERALL SCORE: ${lastResults.overallPct}/100
+
+CATEGORY BREAKDOWN:
+${CATEGORIES.map(c => `${c}: ${lastResults.catPercents[c]}%`).join('\n')}
+
+Strongest Area: ${sorted[sorted.length-1]}
+Priority Focus Area: ${sorted[0]}
+
+30-DAY ACTION PLAN:
+${planText}
+
+--
+Generated by Productivity Score Checker | IncomeAIHub
+`;
+  const blob = new Blob([report], {type:'text/plain'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = 'productivity-report.txt';
+  a.click();
+  URL.revokeObjectURL(url);
+  showToast('Report download ho gayi!', 'success');
+}
+
+/* ============================================================
+   UTILITIES
+   ============================================================ */
+function escapeHtml(str){
+  const div = document.createElement('div');
+  div.textContent = str;
+  return div.innerHTML;
+}
+function showToast(msg, type){
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast show' + (type ? ' ' + type : '');
+  setTimeout(() => { t.className = 'toast'; }, 3200);
+}
+function openGuide(){ document.getElementById('guideModal').classList.add('show'); }
+function closeGuide(){ document.getElementById('guideModal').classList.remove('show'); }
+document.getElementById('guideModal').addEventListener('click', (e) => {
+  if(e.target.id === 'guideModal') closeGuide();
+});
+
+// Init: check unlock status on load in case user returns
+window.addEventListener('load', () => {
+  getDeviceId();
+});
+</script>
+</body>
+</html>
